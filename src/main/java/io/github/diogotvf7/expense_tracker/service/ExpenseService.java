@@ -5,7 +5,10 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import io.github.diogotvf7.expense_tracker.dto.ExpenseRequest;
+import io.github.diogotvf7.expense_tracker.model.Category;
 import io.github.diogotvf7.expense_tracker.model.Expense;
+import io.github.diogotvf7.expense_tracker.repository.CategoryRepository;
 import io.github.diogotvf7.expense_tracker.repository.ExpenseRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -14,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class ExpenseService {
 
     private final ExpenseRepository expenseRepository;
+    private final CategoryRepository categoryRepository;
 
     public List<Expense> getAllExpenses() {
         return expenseRepository.findAll();
@@ -31,8 +35,16 @@ public class ExpenseService {
         return false;
     }
 
-    public Expense createExpense(Expense expense) {
+    public Expense createExpense(ExpenseRequest request) throws RuntimeException {
+        Category category = categoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        Expense expense = new Expense();
+        expense.setDescription(request.description());
+        expense.setAmount(request.amount());
+        expense.setCategory(category);
         expense.setTimestamp(java.time.LocalDateTime.now());
+
         return expenseRepository.save(expense);
     }
 
