@@ -1,5 +1,6 @@
 package io.github.diogotvf7.expense_tracker.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +20,8 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final CategoryRepository categoryRepository;
 
-    public List<Expense> getAllExpenses() {
-        return expenseRepository.findAll();
+    public List<Expense> getFilteredExpenses(String category, BigDecimal minAmount, BigDecimal maxAmount) {
+        return expenseRepository.findWithFilters(category, minAmount, maxAmount);
     }
 
     public Optional<Expense> getExpense(Long id) {

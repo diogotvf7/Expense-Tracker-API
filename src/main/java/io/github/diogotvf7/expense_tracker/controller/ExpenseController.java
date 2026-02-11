@@ -1,5 +1,6 @@
 package io.github.diogotvf7.expense_tracker.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.diogotvf7.expense_tracker.dto.ExpenseRequest;
@@ -26,8 +28,13 @@ public class ExpenseController {
     private final ExpenseService expenseService;
 
     @GetMapping
-    public List<Expense> getExpenses() {
-        return expenseService.getAllExpenses();
+    public ResponseEntity<List<Expense>> getExpenses(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) BigDecimal minAmount,
+            @RequestParam(required = false) BigDecimal maxAmount) {
+
+        List<Expense> expenses = expenseService.getFilteredExpenses(category, minAmount, maxAmount);
+        return ResponseEntity.ok(expenses);
     }
 
     @GetMapping("/{id}")
